@@ -1,0 +1,203 @@
+Sub inserting_ticker_Column()
+
+For Each ws In Worksheets
+
+'Creating variables to hold, ticker code, last row,
+
+Dim LastRow As Double
+
+LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+Dim Ticker_Code As String
+
+'Counting the ticker entries
+    Dim Ticker_Code_Count As Double
+    Ticker_Code_Count = 0
+
+
+Dim summary_table_row As Integer
+summary_table_row = 2
+
+Dim Stock_Total_Volume As Double
+Stock_Total_Volume = 0
+
+
+'Stock CLosing Price and opening price
+Dim Stock_Closing_Price As Double
+Stock_Closing_Price = 0
+
+Dim Stock_Opening_Price As Double
+Stock_Opening_Price = 0
+
+'Dim Price Change
+Dim Price_Change As Double
+Price_Change = 0
+
+Dim Percentage_Change As Double
+Percentage_Change = 0
+
+
+For i = 2 To LastRow
+
+ If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+ 
+    Ticker_Code = ws.Cells(i, 1).Value
+    
+    Ticker_Code_Count = Ticker_Code_Count + 1
+    
+    Stock_Total_Volume = Stock_Total_Volume + ws.Cells(i, 7).Value
+    
+    Stock_Closing_Price = ws.Cells(i, 6).Value
+    
+    ' finding first value, ticker code count  dynamic
+
+    Stock_Opening_Price = ws.Cells(i + 1 - Ticker_Code_Count, 3).Value
+ 
+    ws.Range("J" & summary_table_row).Value = Ticker_Code
+    
+    ws.Range("M" & summary_table_row).Value = Stock_Total_Volume
+    
+ ws.Range("Q" & summary_table_row).Value = Ticker_Code_Count
+    
+    'Inserting stock price into table
+    ws.Range("K" & summary_table_row).Value = Stock_Opening_Price
+    
+    ws.Range("L" & summary_table_row).Value = Stock_Closing_Price
+    ' price change
+    
+    Price_Change = Stock_Closing_Price - Stock_Opening_Price
+    
+    ws.Range("N" & summary_table_row).Value = Price_Change
+    
+    
+    Stock_Total_Volume = 0
+    Ticker_Code_Count = 0
+    'Percentage change
+
+        If Stock_Opening_Price = 0 Then
+        Stock_Opening_Price = ws.Cells(i + 1, 2).Value
+        End If
+    
+    Percentage_Change = ((Stock_Closing_Price / Stock_Opening_Price) * 100) - 100
+    
+    ws.Range("O" & summary_table_row).Value = Percentage_Change
+    
+    summary_table_row = summary_table_row + 1
+    
+    Stock_Total_Volume = 0
+    Ticker_Code_Count = 0
+    
+   ' MsgBox (Ticker_Code_Count)
+    
+    Else
+    
+    'adding to stock total
+    
+    Stock_Total_Volume = Stock_Total_Volume + ws.Cells(i, 7).Value
+    Ticker_Code_Count = Ticker_Code_Count + 1
+ 
+ End If
+
+ 
+ Next i
+ 
+ ws.Range("J1") = "Ticker Code"
+ ws.Range("M1") = "Total Volume Traded"
+ ws.Range("K1") = "Opening Price"
+ ws.Range("L1") = "Stock Closing Price"
+ 
+ ws.Range("N1") = "Price Change"
+ ws.Range("O1") = "Percentage Change"
+ 
+   'formatting cells colour based on price change
+   Dim Last_Row_st As Long
+   Last_Row_st = 0
+
+Last_Row_st = ws.Range("J" & Rows.Count).End(xlUp).Row
+
+'MsgBox (LastRow_Summary_Table)
+
+For k = 2 To Last_Row_st
+   
+        If ws.Cells(k, 14).Value > 0 Then
+            
+        
+            
+         ws.Cells(k, 14).Interior.Color = vbGreen
+         End If
+         
+        If ws.Cells(k, 14).Value <= 0 Then
+         ws.Cells(k, 14).Interior.Color = vbRed
+        End If
+            
+             
+        
+Next k
+'Find max value in range
+'Find Min value in range
+'find Max volume in range
+'print ticker code for the above and corresponding values
+
+'For loop, if functions,
+
+'check cell against preceding cell to see if value increasing
+'if following cell increasing then add cell value to percent increase variable
+'run through loop
+'print value,ticker,
+
+Dim Max_Value As Double
+Max_Value = 0
+
+Dim Min_Value As Double
+Min_Value = 0
+
+Dim Max_Volume As Double
+Max_Volume = 0
+
+
+Dim Ticker_code_2 As String
+Dim Ticker_code_3 As String
+Dim Ticker_code_4 As String
+
+    For J = 2 To Last_Row_st
+'Maximum
+        If ws.Cells(J, 15).Value > Max_Value Then
+        
+        Max_Value = ws.Cells(J, 15).Value
+        Ticker_code_2 = ws.Cells(J, 10).Value
+        End If
+        
+       'Minimum
+        If ws.Cells(J, 15).Value < Min_Value Then
+        
+        Min_Value = ws.Cells(J, 15).Value
+        Ticker_code_3 = ws.Cells(J, 10).Value
+        End If
+        
+        'Max Volume
+        If ws.Cells(J, 13).Value > Max_Volume Then
+        
+        Max_Volume = ws.Cells(J, 13).Value
+        Ticker_code_4 = ws.Cells(J, 10).Value
+        End If
+        
+        
+    Next J
+    ws.Range("u2") = Max_Value
+    ws.Range("t2") = Ticker_code_2
+    
+    ws.Range("u3") = Min_Value
+    ws.Range("t3") = Ticker_code_3
+        
+        
+    ws.Range("u4") = Max_Volume
+    ws.Range("t4") = Ticker_code_4
+        
+ ws.Range("t1") = "Ticker Code"
+ ws.Range("u1") = "Value"
+ ws.Range("s2") = "Greatest percentage change"
+ ws.Range("s3") = "Lowest percentage change"
+ ws.Range("s4") = "Greatest Volume"
+ Next ws
+
+End Sub
